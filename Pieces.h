@@ -9,16 +9,19 @@ namespace SimpleChess {
     class Piece {
     private:
         const Color color;
-        int lastRoundMoved = -1;
+
     public:
         Piece(Color color);
 
-        Color getColor();
+        const Color getColor() const;
         virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Piece const * const (&board)[BOARD_SIZE]) = 0;
         virtual const char getChar() const = 0;
     };
 
     class Pawn : public Piece {
+    private:
+        bool moved = false;
+
     public:
         Pawn(Color color);
 

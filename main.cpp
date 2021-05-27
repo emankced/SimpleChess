@@ -56,6 +56,8 @@ int main(int argc, char *argv[]) {
         cout << "It's " << (chess.whoseTurnIsIt() == white ? "white" : "black") << "'s turn." << endl;
 
         printBoard(chess);
+        chess.move(1, 1, 1, 3);
+        printBoard(chess);
 
         // TODO
         break;
