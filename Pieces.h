@@ -15,6 +15,7 @@ namespace SimpleChess {
 
         Color getColor();
         virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Piece const * const (&board)[BOARD_SIZE]) = 0;
+        virtual const char getChar() const = 0;
     };
 
     class Pawn : public Piece {
@@ -22,6 +23,7 @@ namespace SimpleChess {
         Pawn(Color color);
 
         virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Piece const * const (&board)[BOARD_SIZE]);
+        virtual const char getChar() const;
     };
 }
 

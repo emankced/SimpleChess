@@ -22,3 +22,7 @@ std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Piece
 
     return availableFields;
 }
+
+const char Pawn::getChar() const {
+    return 'p';
+}
