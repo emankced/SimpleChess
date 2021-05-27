@@ -71,5 +71,7 @@ bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
 
     dstPtr = piece;
     piece = nullptr;
+    dstPtr->setMoved();
+    ++this->turn;
     return true;
 }

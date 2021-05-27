@@ -10,18 +10,20 @@ namespace SimpleChess {
     private:
         const Color color;
 
+    protected:
+        bool moved = false;
+
     public:
         Piece(Color color);
+        virtual ~Piece() = default;
 
         const Color getColor() const;
+        void setMoved();
         virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Piece const * const (&board)[BOARD_SIZE]) = 0;
         virtual const char getChar() const = 0;
     };
 
     class Pawn : public Piece {
-    private:
-        bool moved = false;
-
     public:
         Pawn(Color color);
 

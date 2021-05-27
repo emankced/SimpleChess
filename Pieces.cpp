@@ -8,6 +8,10 @@ const Color Piece::getColor() const {
     return this->color;
 }
 
+void Piece::setMoved() {
+    this->moved = true;
+}
+
 Pawn::Pawn(Color color) : Piece(color) {}
 
 std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Piece const * const (&board)[BOARD_SIZE]) {
@@ -15,7 +19,7 @@ std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Piece
 
     int x_ = x;
     int y_ = y;
-    auto validCoord = [&x_, &y_](){ return std::min(x_, y_) >= 0 && x_ < BOARD_WIDTH && y_ < BOARD_HEIGHT; };
+    auto validCoord = [&](){ return validCoordinate(x_, y_); };
 
     // test if the piece is at the position
     if(!validCoord() || board[x + y*BOARD_WIDTH] != this) {
