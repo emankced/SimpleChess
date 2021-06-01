@@ -10,7 +10,7 @@
 namespace SimpleChess {
     class Board {
     private:
-        std::vector<std::shared_ptr<Piece>> pieces;
+        std::vector<std::unique_ptr<Piece>> pieces;
         Piece* board[BOARD_SIZE];
 
     public:

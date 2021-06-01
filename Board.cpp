@@ -11,7 +11,7 @@ Board::Board() {
     }
 
     for(int i = 0; i < BOARD_WIDTH; ++i) {
-        this->pieces.push_back(std::make_shared<Pawn>(white));
+        this->pieces.push_back(std::make_unique<Pawn>(white));
         board[BOARD_WIDTH + i] = this->pieces.back().get();
     }
 
@@ -20,7 +20,7 @@ Board::Board() {
     }
 
     for(int i = BOARD_SIZE - 2*BOARD_WIDTH; i < BOARD_SIZE - BOARD_WIDTH; ++i) {
-        this->pieces.push_back(std::make_shared<Pawn>(black));
+        this->pieces.push_back(std::make_unique<Pawn>(black));
         board[i] = this->pieces.back().get();
     }
 

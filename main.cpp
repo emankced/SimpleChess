@@ -6,7 +6,7 @@ using namespace std;
 using namespace SimpleChess;
 
 void printBoard(Chess &chess) {
-    auto board = chess.getBoard();
+    Board const &board = chess.getBoard();
 
     cout << "  ";
     for(int col = 0; col < BOARD_WIDTH; ++col) {
