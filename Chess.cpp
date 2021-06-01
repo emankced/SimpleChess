@@ -22,7 +22,7 @@ int Chess::getTurn() {
 }
 
 bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
-    Piece *(&piece) = this->board.get(srcX, srcY);// this->board[srcX + BOARD_WIDTH*srcY];
+    Piece *(&piece) = this->board.get(srcX, srcY);
     if(piece == nullptr) {
         return false;
     }
@@ -33,21 +33,17 @@ bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
         return false;
     }
 
-    auto allAvailableFields = piece->getAllAvailableFields(srcX, srcY, this->board);
+    auto allAvailableFields = piece->getAllAvailableFields(srcX, srcY, this->board, this->turn);
 
     // check if the destination field is unreachable
     if(std::find(allAvailableFields.begin(), allAvailableFields.end(), std::pair<int, int>(dstX, dstY)) == allAvailableFields.end()) {
         return false;
     }
 
-    Piece *(&dstPtr) = this->board.get(dstX, dstY);
-    if(dstPtr != nullptr) {
-        this->board.fallenPieces.push_back(dstPtr);
+    if(!piece->move(srcX, srcY, dstX, dstY, this->board, this->turn)) {
+        return false;
     }
 
-    dstPtr = piece;
-    piece = nullptr;
-    dstPtr->setMoved();
     ++this->turn;
     return true;
 }

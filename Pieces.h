@@ -13,17 +13,20 @@ namespace SimpleChess {
         const Color color;
 
     protected:
-        bool moved = false;
+        int lastTurnMoved = -1;
+        int moveCount = 0;
 
     public:
         Piece(Color color);
-
         virtual ~Piece() = default;
 
         const Color getColor() const;
-        void setMoved();
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board) = 0;
+        int getLastTurnMoved() const;
+        int getMoveCount() const;
+
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) = 0;
         virtual const char getChar() const = 0;
+        virtual bool move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn);
     };
 
     class Pawn : public Piece {
@@ -31,8 +34,9 @@ namespace SimpleChess {
         Pawn(Color color);
         virtual ~Pawn() = default;
 
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board);
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
         virtual const char getChar() const;
+        virtual bool move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn);
     };
 }
 
