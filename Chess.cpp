@@ -4,31 +4,7 @@
 
 using namespace SimpleChess;
 
-Chess::Chess() {
-    for(int i = 0; i < BOARD_WIDTH; ++i) {
-        this->board[i] = nullptr; // TODO
-    }
-
-    for(int i = 0; i < BOARD_WIDTH; ++i) {
-        this->pieces.push_back(std::make_unique<Pawn>(white));
-        board[BOARD_WIDTH + i] = this->pieces.back().get();
-    }
-
-    for(int i = 2*BOARD_WIDTH; i < BOARD_SIZE - 2*BOARD_WIDTH; ++i) {
-        this->board[i] = nullptr;
-    }
-
-    for(int i = BOARD_SIZE - 2*BOARD_WIDTH; i < BOARD_SIZE - BOARD_WIDTH; ++i) {
-        this->pieces.push_back(std::make_unique<Pawn>(black));
-        board[i] = this->pieces.back().get();
-    }
-
-    for(int i = BOARD_SIZE - BOARD_WIDTH; i < BOARD_SIZE; ++i) {
-        this->board[i] = nullptr; // TODO
-    }
-}
-
-Piece const * const (& Chess::getBoard())[BOARD_SIZE] {
+Board const & Chess::getBoard() const {
     return this->board;
 }
 
@@ -46,7 +22,7 @@ int Chess::getTurn() {
 }
 
 bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
-    Piece *(&piece) = this->board[srcX + BOARD_WIDTH*srcY];
+    Piece *(&piece) = this->board.get(srcX, srcY);// this->board[srcX + BOARD_WIDTH*srcY];
     if(piece == nullptr) {
         return false;
     }
@@ -64,9 +40,9 @@ bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
         return false;
     }
 
-    Piece *(&dstPtr) = this->board[dstX + BOARD_WIDTH*dstY];
+    Piece *(&dstPtr) = this->board.get(dstX, dstY);
     if(dstPtr != nullptr) {
-        this->fallenPieces.push_back(dstPtr);
+        this->board.fallenPieces.push_back(dstPtr);
     }
 
     dstPtr = piece;

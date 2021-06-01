@@ -1,24 +1,17 @@
 #ifndef CHESS_H
 #define CHESS_H
 
-#include <memory>
-#include <vector>
-
 #include "Pieces.h"
+#include "Board.h"
 
 namespace SimpleChess {
     class Chess {
     private:
-        std::vector<std::unique_ptr<Piece>> pieces;
-        std::vector<Piece*> fallenPieces;
-        Piece* board[BOARD_SIZE];
-
+        Board board;
         int turn = 0;
 
     public:
-        Chess();
-
-        Piece const * const (& getBoard())[BOARD_SIZE];
+        Board const & getBoard() const;
         State getState();
         Color whoseTurnIsIt();
         int getTurn();

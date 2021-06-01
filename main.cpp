@@ -23,7 +23,7 @@ void printBoard(Chess &chess) {
     for(int row = BOARD_HEIGHT-1; row >= 0; --row) {
         cout << static_cast<char>('1'+row) << "|";
         for(int col = 0; col < BOARD_WIDTH; ++col) {
-            auto piece = board[col + row*BOARD_WIDTH];
+            auto piece = board.at(col, row);
             if(piece == nullptr) {
                 cout << " ";
             } else {
@@ -61,6 +61,9 @@ int main(int argc, char *argv[]) {
 
         chess.move(1, 3, 1, 5);
         chess.move(1, 3, 0, 4);
+
+        chess.move(1, 6, 1, 4);
+        chess.move(0, 4, 1, 5);
 
         printBoard(chess);
 
