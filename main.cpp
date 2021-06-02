@@ -72,6 +72,9 @@ int main(int argc, char *argv[]) {
         chess.move(6, 0, 7, 2);
 
         chess.move(3, 7, 1, 6);
+        chess.move(7, 0, 2, 0);
+
+        chess.move(0, 7, 0, 1);
 
         printBoard(chess);
 

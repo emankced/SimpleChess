@@ -191,3 +191,64 @@ std::vector<std::pair<int, int>> Knight::getAllAvailableFields(int x, int y, Boa
 const char Knight::getChar() const {
     return 'k';
 }
+
+Rogue::Rogue(Color color) : Piece(color) {}
+
+std::vector<std::pair<int, int>> SimpleChess::Rogue::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
+    if(board.at(x, y) != this) {
+        throw std::invalid_argument("This piece could not be found at the location.");
+    }
+
+    std::vector<std::pair<int, int>> availableFields;
+
+    for(int x_ = x+1; x_ < BOARD_WIDTH; ++x_) {
+        Piece const *p = board.at(x_, y);
+        if(p != nullptr) {
+            if(p->getColor() != this->getColor()) {
+                availableFields.emplace_back(x_, y);
+            }
+            break;
+        }
+        availableFields.emplace_back(x_, y);
+    }
+
+    for(int x_ = x-1; x_ >= 0; --x_) {
+        Piece const *p = board.at(x_, y);
+        if(p != nullptr) {
+            if(p->getColor() != this->getColor()) {
+                availableFields.emplace_back(x_, y);
+            }
+            break;
+        }
+        availableFields.emplace_back(x_, y);
+    }
+
+    for(int y_ = y+1; y_ < BOARD_HEIGHT; ++y_) {
+        Piece const *p = board.at(x, y_);
+        if(p != nullptr) {
+            if(p->getColor() != this->getColor()) {
+                availableFields.emplace_back(x, y_);
+            }
+            break;
+        }
+        availableFields.emplace_back(x, y_);
+    }
+
+    for(int y_ = y-1; y_ >= 0; --y_) {
+        Piece const *p = board.at(x, y_);
+        if(p != nullptr) {
+            if(p->getColor() != this->getColor()) {
+                availableFields.emplace_back(x, y_);
+            }
+            break;
+        }
+        availableFields.emplace_back(x, y_);
+    }
+
+    return availableFields;
+}
+
+const char Rogue::getChar() const {
+    return 'r';
+}
+

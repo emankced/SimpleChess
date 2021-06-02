@@ -10,11 +10,17 @@ Board::Board() {
         this->board[i] = nullptr; // TODO
     }
 
+    this->pieces.push_back(std::make_unique<Rogue>(white));
+    this->set(0, 0, this->pieces.back().get());
+
     this->pieces.push_back(std::make_unique<Knight>(white));
     this->set(1, 0, this->pieces.back().get());
 
     this->pieces.push_back(std::make_unique<Knight>(white));
     this->set(6, 0, this->pieces.back().get());
+
+    this->pieces.push_back(std::make_unique<Rogue>(white));
+    this->set(7, 0, this->pieces.back().get());
 
     for(int i = 0; i < BOARD_WIDTH; ++i) {
         this->pieces.push_back(std::make_unique<Pawn>(white));
@@ -34,11 +40,17 @@ Board::Board() {
         this->board[i] = nullptr; // TODO
     }
 
+    this->pieces.push_back(std::make_unique<Rogue>(black));
+    this->set(0, 7, this->pieces.back().get());
+
     this->pieces.push_back(std::make_unique<Knight>(black));
     this->set(1, 7, this->pieces.back().get());
 
     this->pieces.push_back(std::make_unique<Knight>(black));
     this->set(6, 7, this->pieces.back().get());
+
+    this->pieces.push_back(std::make_unique<Rogue>(black));
+    this->set(7, 7, this->pieces.back().get());
 }
 
 Piece const * Board::at(int x, int y) const {
