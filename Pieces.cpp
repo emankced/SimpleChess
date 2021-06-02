@@ -51,6 +51,8 @@ std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Board
     int x_ = x;
     int y_ = y;
     auto validCoord = [&](){ return validCoordinate(x_, y_); };
+    auto attackCheck = [&](){ return validCoordinate(x_, y_) && board.at(x_, y_) != nullptr && board.at(x_, y_)->getColor() != this->getColor(); };
+
     int direction = (getColor() == white ? 1 : -1);
     y_ = y + direction;
 
@@ -67,12 +69,12 @@ std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Board
 
     x_ = x+1;
     y_ = y + direction;
-    if(validCoord() && board.at(x_, y_) != nullptr && board.at(x_, y_)->getColor() != this->getColor()) {
+    if(attackCheck()) {
         availableFields.emplace_back(x_, y_);
     }
 
     x_ = x-1;
-    if(validCoord() && board.at(x_, y_) != nullptr && board.at(x_, y_)->getColor() != this->getColor()) {
+    if(attackCheck()) {
         availableFields.emplace_back(x_, y_);
     }
 
@@ -80,18 +82,22 @@ std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Board
     if(y == BOARD_HEIGHT / 2 + (getColor() == white ? 0 : direction)) {
         x_ = x-1;
         y_ = y;
-        if(validCoord() && dynamic_cast<Pawn const *>(board.at(x_, y_)) != nullptr) {
-            Pawn const *p = static_cast<Pawn const *>(board.at(x_, y_));
-            if(p->getMoveCount() == 1 && p->getLastTurnMoved() == turn-1) {
+        Pawn const *p = nullptr;
+        auto turnAndMoveCountCheck = [&]() { return p != nullptr && p->getMoveCount() == 1 && p->getLastTurnMoved() == turn-1; };
+
+        if(validCoord()) {
+            p = dynamic_cast<Pawn const *>(board.at(x_, y_));
+
+            if(turnAndMoveCountCheck()) {
                 availableFields.emplace_back(x_, y_ + direction);
             }
         }
 
         x_ = x+1;
+        if(validCoord()) {
+            p = dynamic_cast<Pawn const *>(board.at(x_, y_));
 
-        if(validCoord() && dynamic_cast<Pawn const *>(board.at(x_, y_)) != nullptr) {
-            Pawn const *p = static_cast<Pawn const *>(board.at(x_, y_));
-            if(p->getMoveCount() == 1 && p->getLastTurnMoved() == turn-1) {
+            if(turnAndMoveCountCheck()) {
                 availableFields.emplace_back(x_, y_ + direction);
             }
         }
