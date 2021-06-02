@@ -1,5 +1,7 @@
 #include "Pieces.h"
 
+#include <stdexcept>
+
 #include "Board.h"
 
 using namespace SimpleChess;
@@ -40,17 +42,15 @@ bool Piece::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn)
 Pawn::Pawn(Color color) : Piece(color) {}
 
 std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Board const &board, int turn) {
-    std::vector<std::pair<int, int>> availableFields;
+    // test if the piece is at the position
+    if(board.at(x, y) != this) {
+        throw std::invalid_argument("This piece could not be found at the location.");
+    }
 
+    std::vector<std::pair<int, int>> availableFields;
     int x_ = x;
     int y_ = y;
     auto validCoord = [&](){ return validCoordinate(x_, y_); };
-
-    // test if the piece is at the position
-    if(!validCoord() || board.at(x_, y_) != this) {
-        return availableFields;
-    }
-
     int direction = (getColor() == white ? 1 : -1);
     y_ = y + direction;
 
@@ -124,4 +124,64 @@ bool Pawn::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
     this->lastTurnMoved = turn;
     ++this->moveCount;
     return true;
+}
+
+Knight::Knight(Color color) : Piece(color) {}
+
+std::vector<std::pair<int, int>> Knight::getAllAvailableFields(int x, int y, Board const &board, int turn) {
+    if(board.at(x, y) != this) {
+        throw std::invalid_argument("This piece could not be found at the location.");
+    }
+
+    std::vector<std::pair<int, int>> availableFields;
+
+    int x_ = x + 2;
+    int y_ = y + 1;
+    auto check = [&](){ return validCoordinate(x_, y_) && (board.at(x_, y_) == nullptr || board.at(x_, y_)->getColor() != this->getColor()); };
+
+    if(check()) {
+        availableFields.emplace_back(x_, y_);
+    }
+
+    y_ = y - 1;
+    if(check()) {
+        availableFields.emplace_back(x_, y_);
+    }
+
+    x_ = x - 2;
+    if(check()) {
+        availableFields.emplace_back(x_, y_);
+    }
+
+    y_ = y + 1;
+    if(check()) {
+        availableFields.emplace_back(x_, y_);
+    }
+
+    x_ = x + 1;
+    y_ = y + 2;
+    if(check()) {
+        availableFields.emplace_back(x_, y_);
+    }
+
+    x_ = x - 1;
+    if(check()) {
+        availableFields.emplace_back(x_, y_);
+    }
+
+    y_ = y - 2;
+    if(check()) {
+        availableFields.emplace_back(x_, y_);
+    }
+
+    x_ = x + 1;
+    if(check()) {
+        availableFields.emplace_back(x_, y_);
+    }
+
+    return availableFields;
+}
+
+const char Knight::getChar() const {
+    return 'k';
 }

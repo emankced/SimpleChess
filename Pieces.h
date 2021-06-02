@@ -38,6 +38,15 @@ namespace SimpleChess {
         virtual const char getChar() const;
         virtual bool move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn);
     };
+
+    class Knight : public Piece {
+    public:
+        Knight(Color color);
+        virtual ~Knight() = default;
+
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
+        virtual const char getChar() const;
+    };
 }
 
 #endif
