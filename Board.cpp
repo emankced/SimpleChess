@@ -113,3 +113,64 @@ bool Board::isLocationEndangered(int x, int y, Color ownColor, int turn) const {
 
     return false;
 }
+
+bool Board::isCheck(Color color, int turn) const  {
+    for(int y = 0; y < BOARD_HEIGHT; ++y) {
+        for(int x = 0; x < BOARD_WIDTH; ++x) {
+            Piece const* p = this->at(x, y);
+            if(p != nullptr && p->getColor() == color && dynamic_cast<King const*>(p) != nullptr) {
+                return this->isLocationEndangered(x, y, color, turn);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool Board::isMate(Color color, int turn) const {
+    for(int y = 0; y < BOARD_HEIGHT; ++y) {
+        for(int x = 0; x < BOARD_WIDTH; ++x) {
+            Piece const* p = this->at(x, y);
+            if(p != nullptr && p->getColor() == color && p->getAllAvailableFields(x, y, *this, turn).size() > 0) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+Board::Board(const Board &other) {
+    this->fallenPieces = other.fallenPieces;
+
+    for(auto const& p : other.pieces) {
+        if(dynamic_cast<Pawn*>(p.get()) != nullptr) {
+            this->pieces.push_back(std::make_unique<Pawn>(*static_cast<Pawn*>(p.get())));
+        } else if(dynamic_cast<Rogue*>(p.get()) != nullptr) {
+            this->pieces.push_back(std::make_unique<Rogue>(*static_cast<Rogue*>(p.get())));
+        } else if(dynamic_cast<Knight*>(p.get()) != nullptr) {
+            this->pieces.push_back(std::make_unique<Knight>(*static_cast<Knight*>(p.get())));
+        } else if(dynamic_cast<Bishop*>(p.get()) != nullptr) {
+            this->pieces.push_back(std::make_unique<Bishop>(*static_cast<Bishop*>(p.get())));
+        } else if(dynamic_cast<Queen*>(p.get()) != nullptr) {
+            this->pieces.push_back(std::make_unique<Queen>(*static_cast<Queen*>(p.get())));
+        } else if(dynamic_cast<King*>(p.get()) != nullptr) {
+            this->pieces.push_back(std::make_unique<King>(*static_cast<King*>(p.get())));
+        }
+    }
+
+    for(int y = 0; y < BOARD_HEIGHT; ++y) {
+        for(int x = 0; x < BOARD_WIDTH; ++x) {
+            Piece const *p = other.at(x, y);
+            if(p != nullptr) {
+                for(int i = 0; i < other.pieces.size(); ++i) {
+                    if(other.pieces.at(i).get() == p) {
+                        this->set(x, y, this->pieces.at(i).get());
+                    }
+                }
+            } else {
+                this->set(x, y, nullptr);
+            }
+        }
+    }
+}
