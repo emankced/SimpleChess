@@ -23,6 +23,7 @@ namespace SimpleChess {
         const Color getColor() const;
         int getLastTurnMoved() const;
         int getMoveCount() const;
+        void countMove(int turn);
 
         virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) = 0;
         virtual const char getChar() const = 0;

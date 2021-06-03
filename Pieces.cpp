@@ -20,6 +20,11 @@ int Piece::getMoveCount() const {
     return this->moveCount;
 }
 
+void Piece::countMove(int turn) {
+    this->lastTurnMoved = turn;
+    ++this->moveCount;
+}
+
 bool Piece::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) {
     Piece *(&srcPtr) = board.get(srcX, srcY);
     if(this != srcPtr) {
@@ -33,8 +38,7 @@ bool Piece::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn)
 
     dstPtr = this;
     srcPtr = nullptr;
-    this->lastTurnMoved = turn;
-    ++this->moveCount;
+    this->countMove(turn);
     return true;
 }
 
@@ -63,7 +67,7 @@ std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Board
     availableFields.emplace_back(x_, y_);
 
     y_ += direction;
-    if(validCoord() && this->moveCount == 0 && board.at(x_, y_) == nullptr) {
+    if(validCoord() && this->getMoveCount() == 0 && board.at(x_, y_) == nullptr) {
         availableFields.emplace_back(x_, y_);
     }
 
@@ -127,8 +131,7 @@ bool Pawn::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
 
     dstPtr = this;
     srcPtr = nullptr;
-    this->lastTurnMoved = turn;
-    ++this->moveCount;
+    this->countMove(turn);
     return true;
 }
 
@@ -316,6 +319,37 @@ std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const
         }
     }
 
+    // test for castling
+    if(this->getMoveCount() == 0) {
+        // first left castling
+        bool castling = true;
+        for(int x_ = 1; x_ < x; ++x_) {
+            if(board.at(x_, y) != nullptr) {
+                castling = false;
+                break;
+            }
+        }
+
+        Piece const *p = board.at(0, y);
+        if(castling && p != nullptr && p->getMoveCount() == 0) {
+            availableFields.emplace_back(2, y);
+        }
+
+        // then right castling
+        castling = true;
+        for(int x_ = x+1; x_ < BOARD_WIDTH-1; ++x_) {
+            if(board.at(x_, y) != nullptr) {
+                castling = false;
+                break;
+            }
+        }
+
+        p = board.at(7, y);
+        if(castling && p != nullptr && p->getMoveCount() == 0) {
+            availableFields.emplace_back(6, y);
+        }
+    }
+
     return availableFields;
 }
 
@@ -324,6 +358,35 @@ const char King::getChar() const {
 }
 
 bool King::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) {
-    // TODO
-    return false;
+    Piece *(&srcPtr) = board.get(srcX, srcY);
+    if(this != srcPtr) {
+        return false;
+    }
+
+    Piece *(&dstPtr) = board.get(dstX, dstY);
+    if(dstPtr != nullptr) {
+        board.fallenPieces.push_back(dstPtr);
+        dstPtr->countMove(turn);
+    }
+
+    // test for castling
+    else if(static_cast<unsigned>(dstX - srcX) > 1) {
+        // TODO check that king is not moving through attacked zone
+        if(dstX == 2) {
+            Piece *(&rookPtr) = board.get(0, srcY);
+            board.set(3, srcY, rookPtr);
+            rookPtr->countMove(turn);
+            rookPtr = nullptr;
+        } else {
+            Piece *(&rookPtr) = board.get(7, srcY);
+            board.set(5, srcY, rookPtr);
+            rookPtr->countMove(turn);
+            rookPtr = nullptr;
+        }
+    }
+
+    dstPtr = this;
+    srcPtr = nullptr;
+    this->countMove(turn);
+    return true;
 }
