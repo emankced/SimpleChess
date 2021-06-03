@@ -45,7 +45,7 @@ bool Piece::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn)
 
 Pawn::Pawn(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Board const &board, int turn) {
+std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Board const &board, int turn) const {
     // test if the piece is at the position
     if(board.at(x, y) != this) {
         throw std::invalid_argument("This piece could not be found at the location.");
@@ -137,7 +137,7 @@ bool Pawn::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
 
 Knight::Knight(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Knight::getAllAvailableFields(int x, int y, Board const &board, int turn) {
+std::vector<std::pair<int, int>> Knight::getAllAvailableFields(int x, int y, Board const &board, int turn) const {
     if(board.at(x, y) != this) {
         throw std::invalid_argument("This piece could not be found at the location.");
     }
@@ -186,7 +186,7 @@ const char Knight::getChar() const {
 
 Rogue::Rogue(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Rogue::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
+std::vector<std::pair<int, int>> Rogue::getAllAvailableFields(int x, int y, const Board& board, int turn) const {
     if(board.at(x, y) != this) {
         throw std::invalid_argument("This piece could not be found at the location.");
     }
@@ -222,7 +222,7 @@ const char Rogue::getChar() const {
 
 Bishop::Bishop(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Bishop::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
+std::vector<std::pair<int, int>> Bishop::getAllAvailableFields(int x, int y, const Board& board, int turn) const {
     if(board.at(x, y) != this) {
         throw std::invalid_argument("This piece could not be found at the location.");
     }
@@ -258,7 +258,7 @@ const char Bishop::getChar() const {
 
 Queen::Queen(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Queen::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
+std::vector<std::pair<int, int>> Queen::getAllAvailableFields(int x, int y, const Board& board, int turn) const {
     if(board.at(x, y) != this) {
         throw std::invalid_argument("This piece could not be found at the location.");
     }
@@ -299,7 +299,7 @@ const char Queen::getChar() const {
 
 King::King(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
+std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const Board& board, int turn) const {
     if(board.at(x, y) != this) {
         throw std::invalid_argument("This piece could not be found at the location.");
     }
@@ -320,11 +320,11 @@ std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const
     }
 
     // test for castling
-    if(this->getMoveCount() == 0) {
+    if(this->getMoveCount() == 0 && !board.isLocationEndangered(x, y, this->getColor(), turn)) {
         // first left castling
         bool castling = true;
         for(int x_ = 1; x_ < x; ++x_) {
-            if(board.at(x_, y) != nullptr) {
+            if(board.at(x_, y) != nullptr || board.isLocationEndangered(x_, y, this->getColor(), turn)) {
                 castling = false;
                 break;
             }
@@ -338,7 +338,7 @@ std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const
         // then right castling
         castling = true;
         for(int x_ = x+1; x_ < BOARD_WIDTH-1; ++x_) {
-            if(board.at(x_, y) != nullptr) {
+            if(board.at(x_, y) != nullptr || board.isLocationEndangered(x_, y, this->getColor(), turn)) {
                 castling = false;
                 break;
             }
@@ -371,7 +371,6 @@ bool King::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
 
     // test for castling
     else if(static_cast<unsigned>(dstX - srcX) > 1) {
-        // TODO check that king is not moving through attacked zone
         if(dstX == 2) {
             Piece *(&rookPtr) = board.get(0, srcY);
             board.set(3, srcY, rookPtr);

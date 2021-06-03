@@ -25,7 +25,7 @@ namespace SimpleChess {
         int getMoveCount() const;
         void countMove(int turn);
 
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) = 0;
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) const = 0;
         virtual const char getChar() const = 0;
         virtual bool move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn);
     };
@@ -35,7 +35,7 @@ namespace SimpleChess {
         Pawn(Color color);
         virtual ~Pawn() = default;
 
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) const;
         virtual const char getChar() const;
         virtual bool move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn);
     };
@@ -45,7 +45,7 @@ namespace SimpleChess {
         Knight(Color color);
         virtual ~Knight() = default;
 
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) const;
         virtual const char getChar() const;
     };
 
@@ -54,7 +54,7 @@ namespace SimpleChess {
         Rogue(Color color);
         virtual ~Rogue() = default;
 
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) const;
         virtual const char getChar() const;
     };
 
@@ -63,7 +63,7 @@ namespace SimpleChess {
         Bishop(Color color);
         virtual ~Bishop() = default;
 
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) const;
         virtual const char getChar() const;
     };
 
@@ -72,7 +72,7 @@ namespace SimpleChess {
         Queen(Color color);
         virtual ~Queen() = default;
 
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) const;
         virtual const char getChar() const;
     };
 
@@ -81,7 +81,7 @@ namespace SimpleChess {
         King(Color color);
         virtual ~King() = default;
 
-        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) const;
         virtual const char getChar() const;
         virtual bool move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn);
     };

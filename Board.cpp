@@ -1,5 +1,6 @@
 #include "Board.h"
 
+#include <algorithm>
 #include <string>
 #include <stdexcept>
 
@@ -93,3 +94,22 @@ void Board::set(int x, int y, Piece* piece) {
     this->board[x + y*BOARD_WIDTH] = piece;
 }
 
+bool Board::isLocationEndangered(int x, int y, Color ownColor, int turn) const { // this is meant to be used to test for check
+    if(!validCoordinate(x, y)) {
+        throw std::range_error("Coordinates " + std::to_string(x) + " " + std::to_string(y) + " are not on the board!");
+    }
+
+    for(int y_ = 0; y_ < BOARD_HEIGHT; ++y_) {
+        for(int x_ = 0; x_ < BOARD_WIDTH; ++x_) {
+            Piece const *p = this->at(x_, y_);
+            if(p != nullptr && p->getColor() != ownColor && dynamic_cast<const King*>(p) == nullptr) {
+                auto availableFields = p->getAllAvailableFields(x_, y_, *this, turn);
+                if(std::find(availableFields.begin(), availableFields.end(), std::make_pair(x, y)) != availableFields.end()) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
