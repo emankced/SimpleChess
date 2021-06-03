@@ -65,6 +65,15 @@ namespace SimpleChess {
         virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
         virtual const char getChar() const;
     };
+
+    class Queen : public Piece {
+    public:
+        Queen(Color color);
+        virtual ~Queen() = default;
+
+        virtual std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn);
+        virtual const char getChar() const;
+    };
 }
 
 #endif

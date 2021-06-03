@@ -80,6 +80,15 @@ int main(int argc, char *argv[]) {
         chess.move(5, 6, 5, 4);
         chess.move(0, 2, 4, 6);
 
+        chess.move(3, 7, 4, 7);
+        chess.move(4, 1, 4, 2);
+
+        chess.move(4, 7, 6, 5);
+        chess.move(3, 0, 5, 2);
+
+        chess.move(6, 5, 6, 1);
+        chess.move(5, 2, 5, 4);
+
         printBoard(chess);
 
         // TODO
