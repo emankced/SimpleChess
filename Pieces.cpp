@@ -194,7 +194,7 @@ const char Knight::getChar() const {
 
 Rogue::Rogue(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> SimpleChess::Rogue::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
+std::vector<std::pair<int, int>> Rogue::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
     if(board.at(x, y) != this) {
         throw std::invalid_argument("This piece could not be found at the location.");
     }
@@ -252,3 +252,38 @@ const char Rogue::getChar() const {
     return 'r';
 }
 
+Bishop::Bishop(Color color) : Piece(color) {}
+
+std::vector<std::pair<int, int>> Bishop::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
+    if(board.at(x, y) != this) {
+        throw std::invalid_argument("This piece could not be found at the location.");
+    }
+
+    std::vector<std::pair<int, int>> availableFields;
+
+    auto loop = [&](int x_, int y_) {
+        int x_inc = x_ - x;
+        int y_inc = y_ - y;
+        for(; (x_inc > 0 ? x_ < BOARD_WIDTH : x_ >= 0) && (y_inc > 0 ? y_ < BOARD_HEIGHT : y_ >= 0); x_+=x_inc, y_+=y_inc) {
+            Piece const *p = board.at(x_, y_);
+            if(p != nullptr) {
+                if(p->getColor() != this->getColor()) {
+                    availableFields.emplace_back(x_, y_);
+                }
+                break;
+            }
+            availableFields.emplace_back(x_, y_);
+        }
+    };
+
+    loop(x+1, y+1);
+    loop(x+1, y-1);
+    loop(x-1, y+1);
+    loop(x-1, y-1);
+
+    return availableFields;
+}
+
+const char Bishop::getChar() const {
+    return 'b';
+}

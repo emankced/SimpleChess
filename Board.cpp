@@ -16,6 +16,12 @@ Board::Board() {
     this->pieces.push_back(std::make_unique<Knight>(white));
     this->set(1, 0, this->pieces.back().get());
 
+    this->pieces.push_back(std::make_unique<Bishop>(white));
+    this->set(2, 0, this->pieces.back().get());
+
+    this->pieces.push_back(std::make_unique<Bishop>(white));
+    this->set(5, 0, this->pieces.back().get());
+
     this->pieces.push_back(std::make_unique<Knight>(white));
     this->set(6, 0, this->pieces.back().get());
 
@@ -45,6 +51,12 @@ Board::Board() {
 
     this->pieces.push_back(std::make_unique<Knight>(black));
     this->set(1, 7, this->pieces.back().get());
+
+    this->pieces.push_back(std::make_unique<Bishop>(black));
+    this->set(2, 7, this->pieces.back().get());
+
+    this->pieces.push_back(std::make_unique<Bishop>(black));
+    this->set(5, 7, this->pieces.back().get());
 
     this->pieces.push_back(std::make_unique<Knight>(black));
     this->set(6, 7, this->pieces.back().get());
