@@ -27,6 +27,12 @@ bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
         return false;
     }
 
+    // destination cannot be the king
+    Piece const *dst = this->board.at(dstX, dstY);
+    if(dst != nullptr && dynamic_cast<King const*>(dst) != nullptr) {
+        return false;
+    }
+
     // TODO check that the destination is not the king
 
     if(piece->getColor() != whoseTurnIsIt()) {
