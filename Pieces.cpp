@@ -293,3 +293,37 @@ std::vector<std::pair<int, int>> Queen::getAllAvailableFields(int x, int y, cons
 const char Queen::getChar() const {
     return 'Q';
 }
+
+King::King(Color color) : Piece(color) {}
+
+std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const SimpleChess::Board& board, int turn) {
+    if(board.at(x, y) != this) {
+        throw std::invalid_argument("This piece could not be found at the location.");
+    }
+
+    std::vector<std::pair<int, int>> availableFields;
+
+    for(int x_ = std::max(x-1, 0); x_ < std::min(x+2, BOARD_WIDTH); ++x_) {
+        for(int y_ = std::max(y-1, 0); y_ < std::min(y+2, BOARD_HEIGHT); ++y_) {
+            if(x_ == x && y_ == y) {
+                continue;
+            }
+
+            Piece const *p = board.at(x_, y_);
+            if(p == nullptr || p->getColor() != this->getColor()) {
+                availableFields.emplace_back(x_, y_);
+            }
+        }
+    }
+
+    return availableFields;
+}
+
+const char King::getChar() const {
+    return 'K';
+}
+
+bool King::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) {
+    // TODO
+    return false;
+}

@@ -6,10 +6,6 @@
 using namespace SimpleChess;
 
 Board::Board() {
-    for(int i = 0; i < BOARD_WIDTH; ++i) {
-        this->board[i] = nullptr; // TODO
-    }
-
     this->pieces.push_back(std::make_unique<Rogue>(white));
     this->set(0, 0, this->pieces.back().get());
 
@@ -21,6 +17,9 @@ Board::Board() {
 
     this->pieces.push_back(std::make_unique<Queen>(white));
     this->set(3, 0, this->pieces.back().get());
+
+    this->pieces.push_back(std::make_unique<King>(white));
+    this->set(4, 0, this->pieces.back().get());
 
     this->pieces.push_back(std::make_unique<Bishop>(white));
     this->set(5, 0, this->pieces.back().get());
@@ -45,10 +44,6 @@ Board::Board() {
         board[i] = this->pieces.back().get();
     }
 
-    for(int i = BOARD_SIZE - BOARD_WIDTH; i < BOARD_SIZE; ++i) {
-        this->board[i] = nullptr; // TODO
-    }
-
     this->pieces.push_back(std::make_unique<Rogue>(black));
     this->set(0, 7, this->pieces.back().get());
 
@@ -60,6 +55,9 @@ Board::Board() {
 
     this->pieces.push_back(std::make_unique<Queen>(black));
     this->set(3, 7, this->pieces.back().get());
+
+    this->pieces.push_back(std::make_unique<King>(black));
+    this->set(4, 7, this->pieces.back().get());
 
     this->pieces.push_back(std::make_unique<Bishop>(black));
     this->set(5, 7, this->pieces.back().get());
