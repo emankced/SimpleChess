@@ -143,47 +143,36 @@ std::vector<std::pair<int, int>> Knight::getAllAvailableFields(int x, int y, Boa
 
     int x_ = x + 2;
     int y_ = y + 1;
-    auto check = [&](){ return validCoordinate(x_, y_) && (board.at(x_, y_) == nullptr || board.at(x_, y_)->getColor() != this->getColor()); };
+    auto checkAndEmplace = [&](){
+        if(validCoordinate(x_, y_) && (board.at(x_, y_) == nullptr || board.at(x_, y_)->getColor() != this->getColor())) {
+            availableFields.emplace_back(x_, y_);
 
-    if(check()) {
-        availableFields.emplace_back(x_, y_);
-    }
+        }
+    };
+
+    checkAndEmplace();
 
     y_ = y - 1;
-    if(check()) {
-        availableFields.emplace_back(x_, y_);
-    }
+    checkAndEmplace();
 
     x_ = x - 2;
-    if(check()) {
-        availableFields.emplace_back(x_, y_);
-    }
+    checkAndEmplace();
 
     y_ = y + 1;
-    if(check()) {
-        availableFields.emplace_back(x_, y_);
-    }
+    checkAndEmplace();
 
     x_ = x + 1;
     y_ = y + 2;
-    if(check()) {
-        availableFields.emplace_back(x_, y_);
-    }
+    checkAndEmplace();
 
     x_ = x - 1;
-    if(check()) {
-        availableFields.emplace_back(x_, y_);
-    }
+    checkAndEmplace();
 
     y_ = y - 2;
-    if(check()) {
-        availableFields.emplace_back(x_, y_);
-    }
+    checkAndEmplace();
 
     x_ = x + 1;
-    if(check()) {
-        availableFields.emplace_back(x_, y_);
-    }
+    checkAndEmplace();
 
     return availableFields;
 }
@@ -201,49 +190,25 @@ std::vector<std::pair<int, int>> Rogue::getAllAvailableFields(int x, int y, cons
 
     std::vector<std::pair<int, int>> availableFields;
 
-    for(int x_ = x+1; x_ < BOARD_WIDTH; ++x_) {
-        Piece const *p = board.at(x_, y);
-        if(p != nullptr) {
-            if(p->getColor() != this->getColor()) {
-                availableFields.emplace_back(x_, y);
+    auto loop = [&](int x_, int y_) {
+        int x_inc = x_ - x;
+        int y_inc = y_ - y;
+        for(; (x_inc != 0 ? (x_inc > 0 ? x_ < BOARD_WIDTH : x_ >= 0) : (y_inc > 0 ? y_ < BOARD_HEIGHT : y_ >= 0)); (x_inc != 0 ? x_+=x_inc : y_+=y_inc)) {
+            Piece const *p = board.at(x_, y_);
+            if(p != nullptr) {
+                if(p->getColor() != this->getColor()) {
+                    availableFields.emplace_back(x_, y_);
+                }
+                break;
             }
-            break;
+            availableFields.emplace_back(x_, y_);
         }
-        availableFields.emplace_back(x_, y);
-    }
+    };
 
-    for(int x_ = x-1; x_ >= 0; --x_) {
-        Piece const *p = board.at(x_, y);
-        if(p != nullptr) {
-            if(p->getColor() != this->getColor()) {
-                availableFields.emplace_back(x_, y);
-            }
-            break;
-        }
-        availableFields.emplace_back(x_, y);
-    }
-
-    for(int y_ = y+1; y_ < BOARD_HEIGHT; ++y_) {
-        Piece const *p = board.at(x, y_);
-        if(p != nullptr) {
-            if(p->getColor() != this->getColor()) {
-                availableFields.emplace_back(x, y_);
-            }
-            break;
-        }
-        availableFields.emplace_back(x, y_);
-    }
-
-    for(int y_ = y-1; y_ >= 0; --y_) {
-        Piece const *p = board.at(x, y_);
-        if(p != nullptr) {
-            if(p->getColor() != this->getColor()) {
-                availableFields.emplace_back(x, y_);
-            }
-            break;
-        }
-        availableFields.emplace_back(x, y_);
-    }
+    loop(x+1, y);
+    loop(x-1, y);
+    loop(x, y+1);
+    loop(x, y-1);
 
     return availableFields;
 }
