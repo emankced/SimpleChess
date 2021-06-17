@@ -9,7 +9,7 @@ using namespace SimpleChess;
 void printBoard(Chess &chess) {
     Board const &board = chess.getBoard();
 
-    cout << "  ";
+    cout << "    ";
     for(int col = 0; col < BOARD_WIDTH; ++col) {
         cout << static_cast<char>('a'+col);
         if(col != BOARD_WIDTH-1) {
@@ -18,14 +18,14 @@ void printBoard(Chess &chess) {
     }
     cout << endl;
 
-    cout << "  ";
-    for(int col = 0; col < BOARD_WIDTH * 2 - 1; ++col) {
+    cout << "   ";
+    for(int col = 0; col < BOARD_WIDTH * 2 + 1; ++col) {
         cout << "-";
     }
     cout << endl;
 
     for(int row = BOARD_HEIGHT-1; row >= 0; --row) {
-        cout << static_cast<char>('1'+row) << "|";
+        cout << static_cast<char>('1'+row) << " | ";
         for(int col = 0; col < BOARD_WIDTH; ++col) {
             auto piece = board.at(col, row);
             if(piece == nullptr) {
@@ -38,16 +38,16 @@ void printBoard(Chess &chess) {
                 cout << " ";
             }
         }
-        cout << "|" << static_cast<char>('1'+row) << endl;
+        cout << " | " << static_cast<char>('1'+row) << endl;
     }
 
-    cout << "  ";
-    for(int col = 0; col < BOARD_WIDTH * 2 - 1; ++col) {
+    cout << "   ";
+    for(int col = 0; col < BOARD_WIDTH * 2 + 1; ++col) {
         cout << "-";
     }
     cout << endl;
 
-    cout << "  ";
+    cout << "    ";
     for(int col = 0; col < BOARD_WIDTH; ++col) {
         cout << static_cast<char>('a'+col);
         if(col != BOARD_WIDTH-1) {
