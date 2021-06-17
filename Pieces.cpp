@@ -45,12 +45,7 @@ bool Piece::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn)
 
 Pawn::Pawn(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Pawn::getAllAvailableFields(int x, int y, Board const &board, int turn) const {
-    // test if the piece is at the position
-    if(board.at(x, y) != this) {
-        throw std::invalid_argument("This piece could not be found at the location.");
-    }
-
+std::vector<std::pair<int, int>> Pawn::getAllFields(int x, int y, Board const &board, int turn) const {
     std::vector<std::pair<int, int>> availableFields;
     int x_ = x;
     int y_ = y;
@@ -137,11 +132,7 @@ bool Pawn::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
 
 Knight::Knight(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Knight::getAllAvailableFields(int x, int y, Board const &board, int turn) const {
-    if(board.at(x, y) != this) {
-        throw std::invalid_argument("This piece could not be found at the location.");
-    }
-
+std::vector<std::pair<int, int>> Knight::getAllFields(int x, int y, Board const &board, int turn) const {
     std::vector<std::pair<int, int>> availableFields;
 
     int x_ = x + 2;
@@ -186,11 +177,7 @@ const char Knight::getChar() const {
 
 Rogue::Rogue(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Rogue::getAllAvailableFields(int x, int y, const Board& board, int turn) const {
-    if(board.at(x, y) != this) {
-        throw std::invalid_argument("This piece could not be found at the location.");
-    }
-
+std::vector<std::pair<int, int>> Rogue::getAllFields(int x, int y, const Board& board, int turn) const {
     std::vector<std::pair<int, int>> availableFields;
 
     auto loop = [&](int x_, int y_) {
@@ -222,11 +209,7 @@ const char Rogue::getChar() const {
 
 Bishop::Bishop(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Bishop::getAllAvailableFields(int x, int y, const Board& board, int turn) const {
-    if(board.at(x, y) != this) {
-        throw std::invalid_argument("This piece could not be found at the location.");
-    }
-
+std::vector<std::pair<int, int>> Bishop::getAllFields(int x, int y, const Board& board, int turn) const {
     std::vector<std::pair<int, int>> availableFields;
 
     auto loop = [&](int x_, int y_) {
@@ -258,11 +241,7 @@ const char Bishop::getChar() const {
 
 Queen::Queen(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> Queen::getAllAvailableFields(int x, int y, const Board& board, int turn) const {
-    if(board.at(x, y) != this) {
-        throw std::invalid_argument("This piece could not be found at the location.");
-    }
-
+std::vector<std::pair<int, int>> Queen::getAllFields(int x, int y, const Board& board, int turn) const {
     std::vector<std::pair<int, int>> availableFields;
 
     auto loop = [&](int x_, int y_) {
@@ -299,11 +278,7 @@ const char Queen::getChar() const {
 
 King::King(Color color) : Piece(color) {}
 
-std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const Board& board, int turn) const {
-    if(board.at(x, y) != this) {
-        throw std::invalid_argument("This piece could not be found at the location.");
-    }
-
+std::vector<std::pair<int, int>> King::getAllFields(int x, int y, const Board& board, int turn) const {
     std::vector<std::pair<int, int>> availableFields;
 
     for(int x_ = std::max(x-1, 0); x_ < std::min(x+2, BOARD_WIDTH); ++x_) {
@@ -388,4 +363,27 @@ bool King::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
     srcPtr = nullptr;
     this->countMove(turn);
     return true;
+}
+
+std::vector<std::pair<int, int>> Piece::getAllAvailableFields(int x, int y, Board const &board, int turn) const {
+    if(board.at(x, y) != this) {
+        throw std::invalid_argument("This piece could not be found at the location.");
+    }
+
+    auto availableFields = this->getAllFields(x, y, board, turn);
+
+    if(board.isCheck(this->getColor())) {
+        auto availableFieldsCpy = std::move(availableFields);
+        for(auto const &field : availableFieldsCpy) {
+            Board board_cpy = board;
+            board_cpy.set(field.first, field.second, board_cpy.get(x, y));
+            board_cpy.set(x, y, nullptr);
+
+            if(!board_cpy.isCheck(this->getColor())) {
+                availableFields.push_back(field);
+            }
+        }
+    }
+
+    return availableFields;
 }
