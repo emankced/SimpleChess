@@ -27,6 +27,7 @@ namespace SimpleChess {
         int getMoveCount() const;
         void countMove(int turn);
         std::vector<std::pair<int, int>> getAllAvailableFields(int x, int y, Board const &board, int turn) const;
+        const char getSymbol() const;
 
         virtual const char getChar() const = 0;
         virtual bool move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn);

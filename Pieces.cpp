@@ -172,7 +172,7 @@ std::vector<std::pair<int, int>> Knight::getAllFields(int x, int y, Board const 
 }
 
 const char Knight::getChar() const {
-    return 'k';
+    return 'n';
 }
 
 Rogue::Rogue(Color color) : Piece(color) {}
@@ -273,7 +273,7 @@ std::vector<std::pair<int, int>> Queen::getAllFields(int x, int y, const Board& 
 }
 
 const char Queen::getChar() const {
-    return 'Q';
+    return 'q';
 }
 
 King::King(Color color) : Piece(color) {}
@@ -329,7 +329,7 @@ std::vector<std::pair<int, int>> King::getAllFields(int x, int y, const Board& b
 }
 
 const char King::getChar() const {
-    return 'K';
+    return 'k';
 }
 
 bool King::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) {
@@ -386,4 +386,13 @@ std::vector<std::pair<int, int>> Piece::getAllAvailableFields(int x, int y, Boar
     }
 
     return availableFields;
+}
+
+const char Piece::getSymbol() const {
+    char c = this->getChar();
+    if(this->getColor() == white) {
+        c = std::toupper(c);
+    }
+
+    return c;
 }

@@ -12,11 +12,14 @@ void printBoard(Chess &chess) {
     cout << "  ";
     for(int col = 0; col < BOARD_WIDTH; ++col) {
         cout << static_cast<char>('a'+col);
+        if(col != BOARD_WIDTH-1) {
+            cout << " ";
+        }
     }
     cout << endl;
 
     cout << "  ";
-    for(int col = 0; col < BOARD_WIDTH; ++col) {
+    for(int col = 0; col < BOARD_WIDTH * 2 - 1; ++col) {
         cout << "-";
     }
     cout << endl;
@@ -28,14 +31,18 @@ void printBoard(Chess &chess) {
             if(piece == nullptr) {
                 cout << " ";
             } else {
-                cout << piece->getChar();
+                cout << piece->getSymbol();
+            }
+
+            if(col != BOARD_WIDTH-1) {
+                cout << " ";
             }
         }
         cout << "|" << static_cast<char>('1'+row) << endl;
     }
 
     cout << "  ";
-    for(int col = 0; col < BOARD_WIDTH; ++col) {
+    for(int col = 0; col < BOARD_WIDTH * 2 - 1; ++col) {
         cout << "-";
     }
     cout << endl;
@@ -43,6 +50,9 @@ void printBoard(Chess &chess) {
     cout << "  ";
     for(int col = 0; col < BOARD_WIDTH; ++col) {
         cout << static_cast<char>('a'+col);
+        if(col != BOARD_WIDTH-1) {
+            cout << " ";
+        }
     }
     cout << endl;
 }
@@ -52,8 +62,8 @@ pair<int, int> stringToCoordinates(string const &str) {
     int y = -1;
 
     if(str.size() == 2) {
-        char c = tolower(str.at(0));
-        char n = tolower(str.at(1));
+        char c = std::tolower(str.at(0));
+        char n = str.at(1);
 
         x = (int) c - (int) 'a';
         y = (int) n - (int) '1';
@@ -75,7 +85,7 @@ int main(int argc, char *argv[]) {
             auto fallenPiece = chess.getBoard().getFallenPieces(chess.whoseTurnIsIt());
             cout << "You have a free wish. You can choose between:";
             for(auto const &piece : fallenPiece) {
-                cout << " " << piece->getChar();
+                cout << " " << piece->getSymbol();
             }
             cout << endl << "Please choose one: ";
 
