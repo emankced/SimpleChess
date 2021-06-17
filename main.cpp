@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     Chess chess;
 
     // game loop
-    while(chess.getState() != SimpleChess::chessMate && chess.getState() != SimpleChess::stallMate) {
+    while(chess.getState() != SimpleChess::checkMate && chess.getState() != SimpleChess::stallMate) {
         cout << "It's " << (chess.whoseTurnIsIt() == white ? "white" : "black") << "'s turn." << endl;
 
         printBoard(chess);

@@ -94,32 +94,146 @@ void Board::set(int x, int y, Piece* piece) {
     this->board[x + y*BOARD_WIDTH] = piece;
 }
 
-bool Board::isLocationEndangered(int x, int y, Color ownColor, int turn) const { // this is meant to be used to test for check
+bool Board::isLocationEndangered(int x, int y, Color ownColor) const { // this is meant to be used to test for check
     if(!validCoordinate(x, y)) {
         throw std::range_error("Coordinates " + std::to_string(x) + " " + std::to_string(y) + " are not on the board!");
     }
 
-    for(int y_ = 0; y_ < BOARD_HEIGHT; ++y_) {
-        for(int x_ = 0; x_ < BOARD_WIDTH; ++x_) {
+    auto straightLine = [&](int x_, int y_) {
+        int x_inc = x_ - x;
+        int y_inc = y_ - y;
+        for(; (x_inc != 0 ? (x_inc > 0 ? x_ < BOARD_WIDTH : x_ >= 0) : (y_inc > 0 ? y_ < BOARD_HEIGHT : y_ >= 0)); (x_inc != 0 ? x_+=x_inc : y_+=y_inc)) {
             Piece const *p = this->at(x_, y_);
-            if(p != nullptr && p->getColor() != ownColor && dynamic_cast<const King*>(p) == nullptr) {
-                auto availableFields = p->getAllAvailableFields(x_, y_, *this, turn);
-                if(std::find(availableFields.begin(), availableFields.end(), std::make_pair(x, y)) != availableFields.end()) {
+            if(p != nullptr) {
+                if(p->getColor() != ownColor && (dynamic_cast<Rogue const*>(p) != nullptr || dynamic_cast<Queen const*>(p) != nullptr)) {
+                    return true;
+                }
+                break;
+            }
+        }
+
+        return false;
+    };
+
+    auto diagonalLine = [&](int x_, int y_) {
+        int x_inc = x_ - x;
+        int y_inc = y_ - y;
+        for(; (x_inc > 0 ? x_ < BOARD_WIDTH : x_ >= 0) && (y_inc > 0 ? y_ < BOARD_HEIGHT : y_ >= 0); x_+=x_inc, y_+=y_inc) {
+            Piece const *p = this->at(x_, y_);
+            if(p != nullptr) {
+                if(p->getColor() != ownColor && (dynamic_cast<Bishop const*>(p) != nullptr || dynamic_cast<Queen const*>(p) != nullptr)) {
+                    return true;
+                }
+                break;
+            }
+        }
+
+        return false;
+    };
+
+    auto pawn = [&]() {
+        int direction = (ownColor == white ? -1 : 1);
+        int x_ = x + 1;
+        int y_ = y + direction;
+
+        if(validCoordinate(x_, y_)) {
+            Piece const *p = this->at(x_, y_);
+            if(p != nullptr && dynamic_cast<Pawn const*>(p) != nullptr) {
+                return true;
+            }
+        }
+
+        x_ = x - 1;
+        if(validCoordinate(x_, y_)) {
+            Piece const *p = this->at(x_, y_);
+            if(p != nullptr && dynamic_cast<Pawn const*>(p) != nullptr) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    auto knight = [&]() {
+        int x_ = x + 2;
+        int y_ = y + 1;
+        auto checkKnight = [&](){
+            if(validCoordinate(x_, y_)) {
+                Piece const *p = this->at(x_, y_);
+                if(p != nullptr && p->getColor() != ownColor && dynamic_cast<Knight const*>(p) != nullptr) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        if(checkKnight())
+            return true;
+
+        y_ = y - 1;
+        if(checkKnight())
+            return true;
+
+        x_ = x - 2;
+        if(checkKnight())
+            return true;
+
+        y_ = y + 1;
+        if(checkKnight())
+            return true;
+
+        x_ = x + 1;
+        y_ = y + 2;
+        if(checkKnight())
+            return true;
+
+        x_ = x - 1;
+        if(checkKnight())
+            return true;
+
+        y_ = y - 2;
+        if(checkKnight())
+            return true;
+
+        x_ = x + 1;
+        if(checkKnight())
+            return true;
+
+        return false;
+    };
+
+    auto king = [&]() {
+        for(int y_ = std::max(y-1, 0); y_ < std::min(y+1, BOARD_HEIGHT); ++y_) {
+            for(int x_ = std::max(x-1, 0); x_ < std::min(x+1, BOARD_WIDTH); ++x_) {
+                if(x_ == x && y_ == y) {
+                    continue;
+                }
+
+                Piece const *p = this->at(x_, y_);
+                if(p != nullptr && p->getColor() != ownColor && dynamic_cast<King const*>(p) != nullptr) {
                     return true;
                 }
             }
         }
+
+        return false;
+    };
+
+    if(straightLine(x+1, y) || straightLine(x-1, y) || straightLine(x, y+1) || straightLine(x, y-1)
+        || diagonalLine(x+1, y+1) || diagonalLine(x+1, y-1) || diagonalLine(x-1, y+1) || diagonalLine(x-1, y-1)
+        || pawn() || knight() || king()) {
+        return true;
     }
 
     return false;
 }
 
-bool Board::isCheck(Color color, int turn) const  {
+bool Board::isCheck(Color color) const  {
     for(int y = 0; y < BOARD_HEIGHT; ++y) {
         for(int x = 0; x < BOARD_WIDTH; ++x) {
             Piece const* p = this->at(x, y);
             if(p != nullptr && p->getColor() == color && dynamic_cast<King const*>(p) != nullptr) {
-                return this->isLocationEndangered(x, y, color, turn);
+                return this->isLocationEndangered(x, y, color);
             }
         }
     }

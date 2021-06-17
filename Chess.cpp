@@ -10,10 +10,23 @@ Board const & Chess::getBoard() const {
 
 State Chess::getState() {
     // TODO
+    bool isCheck = this->board.isCheck(this->whoseTurnIsIt());
+    bool isMate = this->board.isCheck(this->whoseTurnIsIt());
+
+    if(isCheck && isMate) {
+        return checkMate;
+    } else if(isCheck) {
+        return check;
+    } else if(isMate) {
+        return stallMate;
+    }
+
+    // TODO wish logic
+
     return normal;
 }
 
-Color Chess::whoseTurnIsIt() {
+Color Chess::whoseTurnIsIt() const {
     return static_cast<Color>(this->turn % 2);
 }
 

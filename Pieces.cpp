@@ -320,11 +320,11 @@ std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const
     }
 
     // test for castling
-    if(this->getMoveCount() == 0 && !board.isLocationEndangered(x, y, this->getColor(), turn)) {
+    if(this->getMoveCount() == 0 && !board.isLocationEndangered(x, y, this->getColor())) {
         // first left castling
         bool castling = true;
         for(int x_ = 1; x_ < x; ++x_) {
-            if(board.at(x_, y) != nullptr || board.isLocationEndangered(x_, y, this->getColor(), turn)) {
+            if(board.at(x_, y) != nullptr || board.isLocationEndangered(x_, y, this->getColor())) {
                 castling = false;
                 break;
             }
@@ -338,7 +338,7 @@ std::vector<std::pair<int, int>> King::getAllAvailableFields(int x, int y, const
         // then right castling
         castling = true;
         for(int x_ = x+1; x_ < BOARD_WIDTH-1; ++x_) {
-            if(board.at(x_, y) != nullptr || board.isLocationEndangered(x_, y, this->getColor(), turn)) {
+            if(board.at(x_, y) != nullptr || board.isLocationEndangered(x_, y, this->getColor())) {
                 castling = false;
                 break;
             }

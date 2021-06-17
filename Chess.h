@@ -13,7 +13,7 @@ namespace SimpleChess {
     public:
         Board const & getBoard() const;
         State getState();
-        Color whoseTurnIsIt();
+        Color whoseTurnIsIt() const;
         int getTurn();
         bool move(int srcX, int srcY, int dstX, int dstY);
     };
