@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 
 #include "Chess.h"
 
@@ -46,6 +47,21 @@ void printBoard(Chess &chess) {
     cout << endl;
 }
 
+pair<int, int> stringToCoordinates(string const &str) {
+    int x = -1;
+    int y = -1;
+
+    if(str.size() == 2) {
+        char c = tolower(str.at(0));
+        char n = tolower(str.at(1));
+
+        x = (int) c - (int) 'a';
+        y = (int) n - (int) '1';
+    }
+
+    return make_pair(x, y);
+}
+
 int main(int argc, char *argv[]) {
     cout << "SimpleChess" << endl << "===========" << endl << endl;
 
@@ -55,52 +71,42 @@ int main(int argc, char *argv[]) {
     while(chess.getState() != SimpleChess::checkMate && chess.getState() != SimpleChess::stallMate) {
         cout << "It's " << (chess.whoseTurnIsIt() == white ? "white" : "black") << "'s turn." << endl;
 
-        printBoard(chess);
-        chess.move(1, 1, 1, 3);
-        chess.move(0, 6, 0, 4);
+        if(chess.getState() == SimpleChess::wish) {
+            auto fallenPiece = chess.getBoard().getFallenPieces(chess.whoseTurnIsIt());
+            cout << "You have a free wish. You can choose between:";
+            for(auto const &piece : fallenPiece) {
+                cout << " " << piece->getChar();
+            }
+            cout << endl << "Please choose one: ";
 
-        chess.move(1, 3, 1, 5);
-        chess.move(1, 3, 0, 4);
+            string input;
+            cin >> input;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        chess.move(1, 6, 1, 4);
-        chess.move(0, 4, 1, 5);
+            size_t n = stoi(input);
+            if(n >= fallenPiece.size() || !chess.wishPiece(fallenPiece.at(n))) {
+                cout << "This wish is not possible!" << endl;
+            }
+        } else {
+            printBoard(chess);
+            cout << "Please move: ";
+            string input0, input1;
+            cin >> input0 >> input1;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        chess.move(1, 7, 2, 5);
-        chess.move(1, 5, 1, 6);
+            auto coordSrc = stringToCoordinates(input0);
+            auto coordDst = stringToCoordinates(input1);
 
-        chess.move(2, 5, 3, 7);
-        chess.move(6, 0, 7, 2);
+            auto coordTest = [](pair<int, int> const &c) {
+                return min(c.first, c.second) >= 0 && c.first < BOARD_WIDTH && c.second < BOARD_HEIGHT;
+            };
 
-        chess.move(3, 7, 1, 6);
-        chess.move(7, 0, 2, 0);
+            if(!coordTest(coordSrc) || !coordTest(coordDst) || !chess.move(coordSrc.first, coordSrc.second, coordDst.first, coordDst.second)) {
+                cout << "Unable to move like this!" << endl;
+            }
+        }
 
-        chess.move(0, 7, 0, 1);
-        chess.move(2, 0, 0, 2);
-
-        chess.move(5, 6, 5, 4);
-        chess.move(0, 2, 4, 6);
-
-        chess.move(3, 7, 4, 7);
-        chess.move(4, 1, 4, 2);
-
-        chess.move(4, 7, 6, 5);
-        chess.move(3, 0, 5, 2);
-
-        chess.move(6, 5, 6, 1);
-        chess.move(5, 2, 5, 4);
-
-        chess.move(6, 7, 7, 5);
-        chess.move(4, 6, 5, 7);
-
-        chess.move(5, 4, 5, 3);
-        chess.move(5, 7, 4, 6);
-
-        chess.move(4, 7, 6, 7);
-
-        printBoard(chess);
-
-        // TODO
-        break;
+        cout << endl;
     }
 
     return 0;
