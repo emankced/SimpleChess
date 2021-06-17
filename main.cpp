@@ -119,5 +119,8 @@ int main(int argc, char *argv[]) {
         cout << endl;
     }
 
+    cout << (chess.whoseTurnIsIt() == white ? "Black" : "White") << " won the game!" << endl;
+    cout << (chess.whoseTurnIsIt() == white ? "White" : "Black") << " is " << (chess.getState() == checkMate ? "check" : "stall") << " mate." << endl;
+
     return 0;
 }
