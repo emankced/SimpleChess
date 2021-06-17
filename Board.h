@@ -12,6 +12,7 @@ namespace SimpleChess {
     private:
         std::vector<std::unique_ptr<Piece>> pieces;
         Piece* board[BOARD_SIZE];
+        std::vector<Piece*> fallenPieces;
 
     public:
         Board();
@@ -24,7 +25,8 @@ namespace SimpleChess {
         bool isCheck(Color color) const;
         bool isMate(Color color, int turn) const;
 
-        std::vector<Piece*> fallenPieces;
+        void addToFallenPieces(Piece* piece);
+        std::vector<Piece*> getFallenPieces(Color color) const;
     };
 }
 

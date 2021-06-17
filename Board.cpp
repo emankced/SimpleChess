@@ -288,3 +288,20 @@ Board::Board(const Board &other) {
         }
     }
 }
+
+void Board::addToFallenPieces(SimpleChess::Piece* piece) {
+    if(piece != nullptr)
+        this->fallenPieces.push_back(piece);
+}
+
+std::vector<Piece*> Board::getFallenPieces(Color color) const {
+    std::vector<Piece*> filteredFallenPieces;
+
+    for(auto const &piece : this->fallenPieces) {
+        if(piece->getColor() == color && dynamic_cast<Pawn*>(piece) == nullptr) {
+            filteredFallenPieces.push_back(piece);
+        }
+    }
+
+    return filteredFallenPieces;
+}

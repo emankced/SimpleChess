@@ -12,10 +12,11 @@ namespace SimpleChess {
 
     public:
         Board const & getBoard() const;
-        State getState();
+        State getState() const;
         Color whoseTurnIsIt() const;
-        int getTurn();
+        int getTurn() const;
         bool move(int srcX, int srcY, int dstX, int dstY);
+        bool wishPiece(Piece *piece);
     };
 }
 #endif

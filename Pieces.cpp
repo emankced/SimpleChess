@@ -33,7 +33,7 @@ bool Piece::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn)
 
     Piece *(&dstPtr) = board.get(dstX, dstY);
     if(dstPtr != nullptr) {
-        board.fallenPieces.push_back(dstPtr);
+        board.addToFallenPieces(dstPtr);
     }
 
     dstPtr = this;
@@ -117,10 +117,10 @@ bool Pawn::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
 
     Piece *(&dstPtr) = board.get(dstX, dstY);
     if(dstPtr != nullptr) {
-        board.fallenPieces.push_back(dstPtr);
+        board.addToFallenPieces(dstPtr);
     } else if(srcX != dstX) { // test for en passant
         Piece *(&enPassantPtr) = board.get(dstX, srcY);
-        board.fallenPieces.push_back(enPassantPtr);
+        board.addToFallenPieces(enPassantPtr);
         enPassantPtr = nullptr;
     }
 
@@ -340,7 +340,7 @@ bool King::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
 
     Piece *(&dstPtr) = board.get(dstX, dstY);
     if(dstPtr != nullptr) {
-        board.fallenPieces.push_back(dstPtr);
+        board.addToFallenPieces(dstPtr);
         dstPtr->countMove(turn);
     }
 
