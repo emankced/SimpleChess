@@ -55,15 +55,13 @@ std::vector<std::pair<int, int>> Pawn::getAllFields(int x, int y, Board const &b
     int direction = (getColor() == white ? 1 : -1);
     y_ = y + direction;
 
-    if(!validCoord() || board.at(x_, y_) != nullptr) {
-        return availableFields;
-    }
-
-    availableFields.emplace_back(x_, y_);
-
-    y_ += direction;
-    if(validCoord() && this->getMoveCount() == 0 && board.at(x_, y_) == nullptr) {
+    if(validCoord() && board.at(x_, y_) == nullptr) {
         availableFields.emplace_back(x_, y_);
+
+        y_ += direction;
+        if(validCoord() && this->getMoveCount() == 0 && board.at(x_, y_) == nullptr) {
+            availableFields.emplace_back(x_, y_);
+        }
     }
 
     x_ = x+1;
@@ -376,8 +374,7 @@ std::vector<std::pair<int, int>> Piece::getAllAvailableFields(int x, int y, Boar
         auto availableFieldsCpy = std::move(availableFields);
         for(auto const &field : availableFieldsCpy) {
             Board board_cpy = board;
-            board_cpy.set(field.first, field.second, board_cpy.get(x, y));
-            board_cpy.set(x, y, nullptr);
+            board_cpy.get(x, y)->move(x, y, field.first, field.second, board_cpy, turn);
 
             if(!board_cpy.isCheck(this->getColor())) {
                 availableFields.push_back(field);

@@ -99,6 +99,10 @@ int main(int argc, char *argv[]) {
             }
         } else {
             printBoard(chess);
+            if(chess.getState() == SimpleChess::check) {
+                cout << (chess.whoseTurnIsIt() == white ? "White" : "Black") << " is in check!" << endl;
+            }
+
             cout << "Please move: ";
             string input0, input1;
             cin >> input0 >> input1;
