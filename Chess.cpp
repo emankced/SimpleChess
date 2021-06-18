@@ -20,13 +20,13 @@ State Chess::getState() const {
         return stallMate;
     }
 
-    // wish logic
+    // promotion logic
     Color color = this->whoseTurnIsIt();
     int row = (color == white ? BOARD_HEIGHT-1 : 0);
     for(int col = 0; col < BOARD_WIDTH; ++col) {
         Piece const *piece = this->board.at(col, row);
         if(piece != nullptr && piece->getColor() == color && dynamic_cast<Pawn const*>(piece) != nullptr) {
-            return wish;
+            return promotionAvailable;
         }
     }
 
@@ -73,14 +73,14 @@ bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
         return false;
     }
 
-    if(this->getState() != wish) {
+    if(this->getState() != promotionAvailable) {
         ++this->turn;
     }
     return true;
 }
 
 bool Chess::promotePawn(char c) {
-    if(this->getState() != wish) {
+    if(this->getState() != promotionAvailable) {
         return false;
     }
 

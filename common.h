@@ -7,7 +7,7 @@ namespace SimpleChess {
     const int BOARD_SIZE = BOARD_WIDTH * BOARD_HEIGHT;
 
     enum Color { white = 0, black = 1 };
-    enum State { normal, check, checkMate, stallMate, wish };
+    enum State { normal, check, checkMate, stallMate, promotionAvailable };
 
     bool validCoordinate(int x, int y);
 }

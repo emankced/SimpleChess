@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     while(chess.getState() != SimpleChess::checkMate && chess.getState() != SimpleChess::stallMate) {
         cout << "It's " << (chess.whoseTurnIsIt() == white ? "white" : "black") << "'s turn." << endl;
 
-        if(chess.getState() == SimpleChess::wish) {
+        if(chess.getState() == SimpleChess::promotionAvailable) {
             cout << "Please choose how to promote your pawn. You can choose from: q r b n";
             cout << endl << "Please choose one: ";
 
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
             cin >> input;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            if(input.size() != 1 || !chess.promotePawn(input.at(0))) {
+            if(input.size() != 1 || !chess.promotePawn(std::tolower(input.at(0)))) {
                 cout << "This promotion is not possible!" << endl;
             }
         } else {
