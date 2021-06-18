@@ -10,7 +10,7 @@ Board const & Chess::getBoard() const {
 
 State Chess::getState() const {
     bool isCheck = this->board.isCheck(this->whoseTurnIsIt());
-    bool isMate = this->board.isCheck(this->whoseTurnIsIt());
+    bool isMate = this->board.isMate(this->whoseTurnIsIt(), this->turn);
 
     if(isCheck && isMate) {
         return checkMate;

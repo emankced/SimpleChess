@@ -118,6 +118,9 @@ int main(int argc, char *argv[]) {
         cout << endl;
     }
 
+    cout << "Game Over!" << endl;
+    printBoard(chess);
+
     cout << (chess.whoseTurnIsIt() == white ? "Black" : "White") << " won the game!" << endl;
     cout << (chess.whoseTurnIsIt() == white ? "White" : "Black") << " is " << (chess.getState() == checkMate ? "check" : "stall") << " mate." << endl;
 
