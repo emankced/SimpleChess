@@ -79,30 +79,6 @@ bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
     return true;
 }
 
-bool Chess::wishPiece(Piece* piece) {
-    if(this->getState() != wish || piece == nullptr || piece->getColor() != this->whoseTurnIsIt()) {
-        return false;
-    }
-
-    Color color = this->whoseTurnIsIt();
-    auto pieces = this->board.getFallenPieces(color);
-    if(std::find(pieces.begin(), pieces.end(), piece) == pieces.end()) {
-        return false;
-    }
-
-    int row = (color == white ? BOARD_HEIGHT-1 : 0);
-    for(int col = 0; col < BOARD_WIDTH; ++col) {
-        Piece const *p = this->board.at(col, row);
-        if(p == piece && p->getColor() == color && dynamic_cast<Pawn const*>(p) != nullptr) {
-            this->board.set(col, row, piece);
-            ++this->turn;
-            return true;
-        }
-    }
-
-    return false;
-}
-
 bool Chess::promotePawn(char c) {
     if(this->getState() != wish) {
         return false;

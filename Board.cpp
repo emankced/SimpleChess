@@ -255,8 +255,6 @@ bool Board::isMate(Color color, int turn) const {
 }
 
 Board::Board(const Board &other) {
-    this->fallenPieces = other.fallenPieces;
-
     for(auto const& p : other.pieces) {
         if(dynamic_cast<Pawn*>(p.get()) != nullptr) {
             this->pieces.push_back(std::make_unique<Pawn>(*static_cast<Pawn*>(p.get())));
@@ -287,23 +285,6 @@ Board::Board(const Board &other) {
             }
         }
     }
-}
-
-void Board::addToFallenPieces(SimpleChess::Piece* piece) {
-    if(piece != nullptr)
-        this->fallenPieces.push_back(piece);
-}
-
-std::vector<Piece*> Board::getFallenPieces(Color color) const {
-    std::vector<Piece*> filteredFallenPieces;
-
-    for(auto const &piece : this->fallenPieces) {
-        if(piece->getColor() == color && dynamic_cast<Pawn*>(piece) == nullptr) {
-            filteredFallenPieces.push_back(piece);
-        }
-    }
-
-    return filteredFallenPieces;
 }
 
 void Board::promote(int x, int y, char c) {
