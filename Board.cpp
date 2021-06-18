@@ -305,3 +305,33 @@ std::vector<Piece*> Board::getFallenPieces(Color color) const {
 
     return filteredFallenPieces;
 }
+
+void Board::promote(int x, int y, char c) {
+    if(!validCoordinate(x, y)) {
+        throw std::range_error("Coordinates " + std::to_string(x) + " " + std::to_string(y) + " are not on the board!");
+    }
+    if(dynamic_cast<Pawn const*>(this->at(x, y)) == nullptr) {
+        throw std::logic_error("Only pawns can be promoted!");
+    }
+
+    Color color = this->at(x, y)->getColor();
+
+    switch(c) {
+        case 'q':
+            this->pieces.push_back(std::make_unique<Queen>(color));
+            break;
+        case 'n':
+            this->pieces.push_back(std::make_unique<Knight>(color));
+            break;
+        case 'r':
+            this->pieces.push_back(std::make_unique<Rogue>(color));
+            break;
+        case 'b':
+            this->pieces.push_back(std::make_unique<Bishop>(color));
+            break;
+        default:
+            throw std::logic_error("A pawn can only be promoted to queens, knights, rogues or bishops!");
+    }
+
+    this->set(x, y, this->pieces.back().get());
+}

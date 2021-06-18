@@ -21,6 +21,7 @@ namespace SimpleChess {
         Piece const * at(int x, int y) const;
         Piece * & get(int x, int y);
         void set(int x, int y, Piece* piece);
+        void promote(int x, int y, char c);
         bool isLocationEndangered(int x, int y, Color ownColor) const;
         bool isCheck(Color color) const;
         bool isMate(Color color, int turn) const;

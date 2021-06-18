@@ -22,13 +22,11 @@ State Chess::getState() const {
 
     // wish logic
     Color color = this->whoseTurnIsIt();
-    if(this->board.getFallenPieces(color).size() > 0) {
-        int row = (color == white ? BOARD_HEIGHT-1 : 0);
-        for(int col = 0; col < BOARD_WIDTH; ++col) {
-            Piece const *piece = this->board.at(col, row);
-            if(piece != nullptr && piece->getColor() == color && dynamic_cast<Pawn const*>(piece) != nullptr) {
-                return wish;
-            }
+    int row = (color == white ? BOARD_HEIGHT-1 : 0);
+    for(int col = 0; col < BOARD_WIDTH; ++col) {
+        Piece const *piece = this->board.at(col, row);
+        if(piece != nullptr && piece->getColor() == color && dynamic_cast<Pawn const*>(piece) != nullptr) {
+            return wish;
         }
     }
 
@@ -97,6 +95,38 @@ bool Chess::wishPiece(Piece* piece) {
         Piece const *p = this->board.at(col, row);
         if(p == piece && p->getColor() == color && dynamic_cast<Pawn const*>(p) != nullptr) {
             this->board.set(col, row, piece);
+            ++this->turn;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Chess::promotePawn(char c) {
+    if(this->getState() != wish) {
+        return false;
+    }
+
+    Color color = this->whoseTurnIsIt();
+    switch(c) {
+        case 'q':
+            break;
+        case 'n':
+            break;
+        case 'r':
+            break;
+        case 'b':
+            break;
+        default:
+            return false;
+    }
+
+    int row = (color == white ? BOARD_HEIGHT-1 : 0);
+    for(int col = 0; col < BOARD_WIDTH; ++col) {
+        Piece const *p = this->board.at(col, row);
+        if(p->getColor() == color && dynamic_cast<Pawn const*>(p) != nullptr) {
+            this->board.promote(col, row, c);
             ++this->turn;
             return true;
         }

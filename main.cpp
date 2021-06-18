@@ -82,20 +82,15 @@ int main(int argc, char *argv[]) {
         cout << "It's " << (chess.whoseTurnIsIt() == white ? "white" : "black") << "'s turn." << endl;
 
         if(chess.getState() == SimpleChess::wish) {
-            auto fallenPiece = chess.getBoard().getFallenPieces(chess.whoseTurnIsIt());
-            cout << "You have a free wish. You can choose between:";
-            for(auto const &piece : fallenPiece) {
-                cout << " " << piece->getSymbol();
-            }
+            cout << "Please choose how to promote your pawn. You can choose from: q r b n";
             cout << endl << "Please choose one: ";
 
             string input;
             cin >> input;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            size_t n = stoi(input);
-            if(n >= fallenPiece.size() || !chess.wishPiece(fallenPiece.at(n))) {
-                cout << "This wish is not possible!" << endl;
+            if(input.size() != 1 || !chess.promotePawn(input.at(0))) {
+                cout << "This promotion is not possible!" << endl;
             }
         } else {
             printBoard(chess);

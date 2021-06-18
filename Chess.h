@@ -17,6 +17,7 @@ namespace SimpleChess {
         int getTurn() const;
         bool move(int srcX, int srcY, int dstX, int dstY);
         bool wishPiece(Piece *piece);
+        bool promotePawn(char c);
     };
 }
 #endif
