@@ -364,15 +364,13 @@ std::vector<std::pair<int, int>> Piece::getAllAvailableFields(int x, int y, Boar
 
     auto availableFields = this->getAllFields(x, y, board, turn);
 
-    if(board.isCheck(this->getColor())) {
-        auto availableFieldsCpy = std::move(availableFields);
-        for(auto const &field : availableFieldsCpy) {
-            Board board_cpy = board;
-            board_cpy.get(x, y)->move(x, y, field.first, field.second, board_cpy, turn);
+    auto availableFieldsCpy = std::move(availableFields);
+    for(auto const &field : availableFieldsCpy) {
+        Board board_cpy = board;
+        board_cpy.get(x, y)->move(x, y, field.first, field.second, board_cpy, turn);
 
-            if(!board_cpy.isCheck(this->getColor())) {
-                availableFields.push_back(field);
-            }
+        if(!board_cpy.isCheck(this->getColor())) {
+            availableFields.push_back(field);
         }
     }
 
