@@ -132,13 +132,13 @@ bool Board::isLocationEndangered(int x, int y, Color ownColor) const { // this i
     };
 
     auto pawn = [&]() {
-        int direction = (ownColor == white ? -1 : 1);
+        int direction = (ownColor == white ? 1 : -1);
         int x_ = x + 1;
         int y_ = y + direction;
 
         if(validCoordinate(x_, y_)) {
             Piece const *p = this->at(x_, y_);
-            if(p != nullptr && dynamic_cast<Pawn const*>(p) != nullptr) {
+            if(p != nullptr && p->getColor() != ownColor && dynamic_cast<Pawn const*>(p) != nullptr) {
                 return true;
             }
         }
@@ -146,7 +146,7 @@ bool Board::isLocationEndangered(int x, int y, Color ownColor) const { // this i
         x_ = x - 1;
         if(validCoordinate(x_, y_)) {
             Piece const *p = this->at(x_, y_);
-            if(p != nullptr && dynamic_cast<Pawn const*>(p) != nullptr) {
+            if(p != nullptr && p->getColor() != ownColor && dynamic_cast<Pawn const*>(p) != nullptr) {
                 return true;
             }
         }
