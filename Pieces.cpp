@@ -300,7 +300,7 @@ std::vector<std::pair<int, int>> King::getAllFields(int x, int y, const Board& b
 
         Piece const *p = board.at(0, y);
         if(castling && p != nullptr && p->getMoveCount() == 0) {
-            availableFields.emplace_back(3, y);
+            availableFields.emplace_back(2, y);
         }
 
         // then right castling
@@ -337,7 +337,7 @@ bool King::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) 
     }
 
     // test for castling
-    else if(static_cast<unsigned>(dstX - srcX) > 1) {
+    else if(std::abs(dstX - srcX) == 2) {
         if(dstX == 2) {
             Piece *(&rookPtr) = board.get(0, srcY);
             board.set(3, srcY, rookPtr);
