@@ -101,7 +101,7 @@ bool Chess::promotePawn(char c) {
     int row = (color == white ? BOARD_HEIGHT-1 : 0);
     for(int col = 0; col < BOARD_WIDTH; ++col) {
         Piece const *p = this->board.at(col, row);
-        if(p->getColor() == color && dynamic_cast<Pawn const*>(p) != nullptr) {
+        if(p != nullptr && p->getColor() == color && dynamic_cast<Pawn const*>(p) != nullptr) {
             this->board.promote(col, row, c);
             ++this->turn;
             return true;
