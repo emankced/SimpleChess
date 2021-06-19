@@ -292,7 +292,7 @@ std::vector<std::pair<int, int>> King::getAllFields(int x, int y, const Board& b
         // first left castling
         bool castling = true;
         for(int x_ = 1; x_ < x; ++x_) {
-            if(board.at(x_, y) != nullptr || board.isLocationEndangered(x_, y, this->getColor())) {
+            if(board.at(x_, y) != nullptr || (x_ > 1 && board.isLocationEndangered(x_, y, this->getColor()))) {
                 castling = false;
                 break;
             }
@@ -300,7 +300,7 @@ std::vector<std::pair<int, int>> King::getAllFields(int x, int y, const Board& b
 
         Piece const *p = board.at(0, y);
         if(castling && p != nullptr && p->getMoveCount() == 0) {
-            availableFields.emplace_back(2, y);
+            availableFields.emplace_back(3, y);
         }
 
         // then right castling
