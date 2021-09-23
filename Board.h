@@ -10,16 +10,15 @@
 namespace SimpleChess {
     class Board {
     private:
-        std::vector<std::unique_ptr<Piece>> pieces;
-        Piece* board[BOARD_SIZE];
+        std::unique_ptr<Piece> board[BOARD_SIZE];
 
     public:
         Board();
         Board(const Board &other);
 
-        Piece const * at(int x, int y) const;
-        Piece * & get(int x, int y);
-        void set(int x, int y, Piece* piece);
+        const std::unique_ptr<Piece> & at(int x, int y) const;
+        std::unique_ptr<Piece> & get(int x, int y);
+        void set(int x, int y, std::unique_ptr<Piece> & piece);
         void promote(int x, int y, char c);
         bool isLocationEndangered(int x, int y, Color ownColor) const;
         bool isCheck(Color color) const;

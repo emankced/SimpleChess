@@ -24,8 +24,8 @@ State Chess::getState() const {
     Color color = this->whoseTurnIsIt();
     int row = (color == white ? BOARD_HEIGHT-1 : 0);
     for(int col = 0; col < BOARD_WIDTH; ++col) {
-        Piece const *piece = this->board.at(col, row);
-        if(piece != nullptr && piece->getColor() == color && dynamic_cast<Pawn const*>(piece) != nullptr) {
+        auto & piece = this->board.at(col, row);
+        if(piece && piece->getColor() == color && dynamic_cast<Pawn const*>(piece.get()) != nullptr) {
             return promotionAvailable;
         }
     }
@@ -47,14 +47,14 @@ bool Chess::move(int srcX, int srcY, int dstX, int dstY) {
         return false;
     }
 
-    Piece *(&piece) = this->board.get(srcX, srcY);
-    if(piece == nullptr) {
+    auto & piece = this->board.get(srcX, srcY);
+    if(!piece) {
         return false;
     }
 
     // destination cannot be the king
-    Piece const *dst = this->board.at(dstX, dstY);
-    if(dst != nullptr && dynamic_cast<King const*>(dst) != nullptr) {
+    auto & dst = this->board.at(dstX, dstY);
+    if(dst && dynamic_cast<King const*>(dst.get()) != nullptr) {
         return false;
     }
 
@@ -100,8 +100,8 @@ bool Chess::promotePawn(char c) {
 
     int row = (color == white ? BOARD_HEIGHT-1 : 0);
     for(int col = 0; col < BOARD_WIDTH; ++col) {
-        Piece const *p = this->board.at(col, row);
-        if(p != nullptr && p->getColor() == color && dynamic_cast<Pawn const*>(p) != nullptr) {
+        auto & p = this->board.at(col, row);
+        if(p && p->getColor() == color && dynamic_cast<Pawn const*>(p.get()) != nullptr) {
             this->board.promote(col, row, c);
             ++this->turn;
             return true;

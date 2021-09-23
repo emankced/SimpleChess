@@ -26,15 +26,16 @@ void Piece::countMove(int turn) {
 }
 
 bool Piece::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) {
-    Piece *(&srcPtr) = board.get(srcX, srcY);
-    if(this != srcPtr) {
+    auto & srcPtr = board.get(srcX, srcY);
+    if(this != srcPtr.get()) {
         return false;
     }
 
-    Piece *(&dstPtr) = board.get(dstX, dstY);
+    auto & dstPtr = board.get(dstX, dstY);
 
-    dstPtr = this;
-    srcPtr = nullptr;
+    //dstPtr = this;
+    //srcPtr = nullptr;
+    dstPtr = std::move(srcPtr);
     this->countMove(turn);
     return true;
 }
@@ -47,16 +48,16 @@ std::vector<std::pair<int, int>> Pawn::getAllFields(int x, int y, Board const &b
     int x_ = x;
     int y_ = y;
     auto validCoord = [&](){ return validCoordinate(x_, y_); };
-    auto attackCheck = [&](){ return validCoordinate(x_, y_) && board.at(x_, y_) != nullptr && board.at(x_, y_)->getColor() != this->getColor(); };
+    auto attackCheck = [&](){ return validCoordinate(x_, y_) && board.at(x_, y_) && board.at(x_, y_)->getColor() != this->getColor(); };
 
     int direction = (getColor() == white ? 1 : -1);
     y_ = y + direction;
 
-    if(validCoord() && board.at(x_, y_) == nullptr) {
+    if(validCoord() && !board.at(x_, y_)) {
         availableFields.emplace_back(x_, y_);
 
         y_ += direction;
-        if(validCoord() && this->getMoveCount() == 0 && board.at(x_, y_) == nullptr) {
+        if(validCoord() && this->getMoveCount() == 0 && !board.at(x_, y_)) {
             availableFields.emplace_back(x_, y_);
         }
     }
@@ -80,7 +81,7 @@ std::vector<std::pair<int, int>> Pawn::getAllFields(int x, int y, Board const &b
         auto turnAndMoveCountCheck = [&]() { return p != nullptr && p->getMoveCount() == 1 && p->getLastTurnMoved() == turn-1; };
 
         if(validCoord()) {
-            p = dynamic_cast<Pawn const *>(board.at(x_, y_));
+            p = dynamic_cast<Pawn const *>(board.at(x_, y_).get());
 
             if(turnAndMoveCountCheck()) {
                 availableFields.emplace_back(x_, y_ + direction);
@@ -89,7 +90,7 @@ std::vector<std::pair<int, int>> Pawn::getAllFields(int x, int y, Board const &b
 
         x_ = x+1;
         if(validCoord()) {
-            p = dynamic_cast<Pawn const *>(board.at(x_, y_));
+            p = dynamic_cast<Pawn const *>(board.at(x_, y_).get());
 
             if(turnAndMoveCountCheck()) {
                 availableFields.emplace_back(x_, y_ + direction);
@@ -105,20 +106,20 @@ const char Pawn::getChar() const {
 }
 
 bool Pawn::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) {
-    Piece *(&srcPtr) = board.get(srcX, srcY);
-    if(this != srcPtr) {
+    auto & srcPtr = board.get(srcX, srcY);
+    if(this != srcPtr.get()) {
         return false;
     }
 
-    Piece *(&dstPtr) = board.get(dstX, dstY);
-    if(dstPtr != nullptr) {
-    } else if(srcX != dstX) { // test for en passant
-        Piece *(&enPassantPtr) = board.get(dstX, srcY);
+    auto & dstPtr = board.get(dstX, dstY);
+    if(!dstPtr && srcX != dstX) { // test for en passant
+        auto & enPassantPtr = board.get(dstX, srcY);
         enPassantPtr = nullptr;
     }
 
-    dstPtr = this;
-    srcPtr = nullptr;
+    //dstPtr = this;
+    //srcPtr = nullptr;
+    dstPtr = std::move(srcPtr);
     this->countMove(turn);
     return true;
 }
@@ -131,9 +132,8 @@ std::vector<std::pair<int, int>> Knight::getAllFields(int x, int y, Board const 
     int x_ = x + 2;
     int y_ = y + 1;
     auto checkAndEmplace = [&](){
-        if(validCoordinate(x_, y_) && (board.at(x_, y_) == nullptr || board.at(x_, y_)->getColor() != this->getColor())) {
+        if(validCoordinate(x_, y_) && (!board.at(x_, y_) || board.at(x_, y_)->getColor() != this->getColor())) {
             availableFields.emplace_back(x_, y_);
-
         }
     };
 
@@ -177,8 +177,8 @@ std::vector<std::pair<int, int>> Rogue::getAllFields(int x, int y, const Board& 
         int x_inc = x_ - x;
         int y_inc = y_ - y;
         for(; (x_inc != 0 ? (x_inc > 0 ? x_ < BOARD_WIDTH : x_ >= 0) : (y_inc > 0 ? y_ < BOARD_HEIGHT : y_ >= 0)); (x_inc != 0 ? x_+=x_inc : y_+=y_inc)) {
-            Piece const *p = board.at(x_, y_);
-            if(p != nullptr) {
+            auto & p = board.at(x_, y_);
+            if(p) {
                 if(p->getColor() != this->getColor()) {
                     availableFields.emplace_back(x_, y_);
                 }
@@ -209,8 +209,8 @@ std::vector<std::pair<int, int>> Bishop::getAllFields(int x, int y, const Board&
         int x_inc = x_ - x;
         int y_inc = y_ - y;
         for(; (x_inc > 0 ? x_ < BOARD_WIDTH : x_ >= 0) && (y_inc > 0 ? y_ < BOARD_HEIGHT : y_ >= 0); x_+=x_inc, y_+=y_inc) {
-            Piece const *p = board.at(x_, y_);
-            if(p != nullptr) {
+            auto & p = board.at(x_, y_);
+            if(p) {
                 if(p->getColor() != this->getColor()) {
                     availableFields.emplace_back(x_, y_);
                 }
@@ -241,8 +241,8 @@ std::vector<std::pair<int, int>> Queen::getAllFields(int x, int y, const Board& 
         int x_inc = x_ - x;
         int y_inc = y_ - y;
         for(; (x_inc == 0 ? true : (x_inc > 0 ? x_ < BOARD_WIDTH : x_ >= 0)) && (y_inc == 0 ? true : (y_inc > 0 ? y_ < BOARD_HEIGHT : y_ >= 0)); (x_inc != 0 ? x_+=x_inc : 0), (y_inc != 0 ? y_+=y_inc : 0)) {
-            Piece const *p = board.at(x_, y_);
-            if(p != nullptr) {
+            auto & p = board.at(x_, y_);
+            if(p) {
                 if(p->getColor() != this->getColor()) {
                     availableFields.emplace_back(x_, y_);
                 }
@@ -280,8 +280,8 @@ std::vector<std::pair<int, int>> King::getAllFields(int x, int y, const Board& b
                 continue;
             }
 
-            Piece const *p = board.at(x_, y_);
-            if(p == nullptr || p->getColor() != this->getColor()) {
+            auto & p = board.at(x_, y_);
+            if(!p || p->getColor() != this->getColor()) {
                 availableFields.emplace_back(x_, y_);
             }
         }
@@ -292,28 +292,28 @@ std::vector<std::pair<int, int>> King::getAllFields(int x, int y, const Board& b
         // first left castling
         bool castling = true;
         for(int x_ = 1; x_ < x; ++x_) {
-            if(board.at(x_, y) != nullptr || (x_ > 1 && board.isLocationEndangered(x_, y, this->getColor()))) {
+            if(board.at(x_, y) || (x_ > 1 && board.isLocationEndangered(x_, y, this->getColor()))) {
                 castling = false;
                 break;
             }
         }
 
-        Piece const *p = board.at(0, y);
-        if(castling && p != nullptr && p->getMoveCount() == 0) {
+        auto & p = board.at(0, y);
+        if(castling && p && p->getMoveCount() == 0) {
             availableFields.emplace_back(2, y);
         }
 
         // then right castling
         castling = true;
         for(int x_ = x+1; x_ < BOARD_WIDTH-1; ++x_) {
-            if(board.at(x_, y) != nullptr || board.isLocationEndangered(x_, y, this->getColor())) {
+            if(board.at(x_, y) || board.isLocationEndangered(x_, y, this->getColor())) {
                 castling = false;
                 break;
             }
         }
 
-        p = board.at(7, y);
-        if(castling && p != nullptr && p->getMoveCount() == 0) {
+        auto & p_ = board.at(7, y);
+        if(castling && p_ && p_->getMoveCount() == 0) {
             availableFields.emplace_back(6, y);
         }
     }
@@ -326,39 +326,38 @@ const char King::getChar() const {
 }
 
 bool King::move(int srcX, int srcY, int dstX, int dstY, Board &board, int turn) {
-    Piece *(&srcPtr) = board.get(srcX, srcY);
-    if(this != srcPtr) {
+    auto & srcPtr = board.get(srcX, srcY);
+    if(this != srcPtr.get()) {
         return false;
     }
 
-    Piece *(&dstPtr) = board.get(dstX, dstY);
-    if(dstPtr != nullptr) {
+    auto & dstPtr = board.get(dstX, dstY);
+    if(dstPtr) {
         dstPtr->countMove(turn);
     }
 
     // test for castling
     else if(std::abs(dstX - srcX) == 2) {
         if(dstX == 2) {
-            Piece *(&rookPtr) = board.get(0, srcY);
+            auto & rookPtr = board.get(0, srcY);
+            rookPtr->countMove(turn);
             board.set(3, srcY, rookPtr);
-            rookPtr->countMove(turn);
-            rookPtr = nullptr;
         } else {
-            Piece *(&rookPtr) = board.get(7, srcY);
-            board.set(5, srcY, rookPtr);
+            auto & rookPtr = board.get(7, srcY);
             rookPtr->countMove(turn);
-            rookPtr = nullptr;
+            board.set(5, srcY, rookPtr);
         }
     }
 
-    dstPtr = this;
-    srcPtr = nullptr;
+    //dstPtr = this;
+    //srcPtr = nullptr;
+    dstPtr = std::move(srcPtr);
     this->countMove(turn);
     return true;
 }
 
 std::vector<std::pair<int, int>> Piece::getAllAvailableFields(int x, int y, Board const &board, int turn) const {
-    if(board.at(x, y) != this) {
+    if(board.at(x, y).get() != this) {
         throw std::invalid_argument("This piece could not be found at the location.");
     }
 

@@ -27,8 +27,8 @@ void printBoard(Chess &chess) {
     for(int row = BOARD_HEIGHT-1; row >= 0; --row) {
         cout << static_cast<char>('1'+row) << " | ";
         for(int col = 0; col < BOARD_WIDTH; ++col) {
-            auto piece = board.at(col, row);
-            if(piece == nullptr) {
+            auto & piece = board.at(col, row);
+            if(!piece) {
                 cout << " ";
             } else {
                 cout << piece->getSymbol();
